@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="/assets/icons/fontawesome-free-6.7.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header container-content">
+        <div class="heading">
+          <i
+            class="fa-solid fa-sliders icon-hover"
+            onclick="showLeftMenu()"
+          ></i>
+          <span>Tổng quan</span>
+        </div>
+        <div class="content-header">
+          <div
+            class="icon-hover has-drop-down-menu"
+            onclick="showDropDownMenu(this)"
+          >
+            <i class="fa-regular fa-envelope"></i>
+            <div class="drop-down-menu"></div>
+          </div>
+          <div
+            class="icon-hover has-drop-down-menu"
+            onclick="showDropDownMenu(this)"
+          >
+            <i class="fa-regular fa-bell"></i>
+            <div class="drop-down-menu"></div>
+          </div>
+          <div class="icon-hover"><i class="fa-solid fa-gear"></i></div>
+          <div
+            class="icon-hover has-drop-down-menu"
+            onclick="showDropDownMenu(this)"
+          >
+            <i class="fa-solid fa-circle-user"></i>
+            <span class="name-user"> &nbsp;Hai Tran</span>
+            <div class="drop-down-menu">
+              <div class="name-user">Hai Tran</div>
+              <hr />
+              <div>Thông tin tài khoản</div>
+              <div>Đăng xuất</div>
+            </div>
+          </div>
+          <div class="icon-hover" onclick="closeContentHeader()">
+            <i class="fa-solid fa-chevron-right"></i>
+          </div>
+        </div>
+        <div class="content-header icon-hover" onclick="showContentHeader()">
+          <div class="more-info">
+            <i class="fa-solid fa-ellipsis-vertical"></i>
+          </div>
+        </div>
+      </div>
+      <div class="left-menu">
+        <div class="heading">
+          <div
+            style="
+              display: flex;
+              flex-direction: row;
+              justify-content: center;
+              width: 100%;
+            "
+          >
+            <span style="width: 95%">GE STORE</span>
+            <span
+              style="
+                display: flex;
+                flex-direction: row;
+                justify-content: right;
+                width: 5%;
+              "
+              ><i
+                class="fa-solid fa-chevron-left icon-hover"
+                onclick="closeLeftMenu()"
+              ></i
+            ></span>
+          </div>
+        </div>
+        <hr />
+        <ul class="content-left-menu">
+          <li class="icon-hover active">
+            <i class="fa-solid fa-landmark"></i>
+            <span class="menu-text">Tổng quan</span>
+          </li>
+          <li class="icon-hover">
+            <i class="fa-solid fa-box-open"></i>
+            <span class="menu-text">Sản phẩm</span>
+          </li>
+          <li class="icon-hover">
+            <i class="fa-solid fa-handshake"></i>
+            <span class="menu-text">Nhà cung cấp</span>
+          </li>
+          <li class="icon-hover">
+            <i class="fa-solid fa-file-invoice"></i>
+            <span class="menu-text">Phiếu nhập kho</span>
+          </li>
+          <li class="icon-hover">
+            <i class="fa-solid fa-file-export"></i>
+            <span class="menu-text">Phiếu xuất kho</span>
+          </li>
+        </ul>
+        <script>
+          function showLeftMenu() {
+            window.onload = function () {
+              let left_menu = document
+                .getElementsByClassName("left-menu")[0]
+                .querySelector("ul");
+              if (left_menu.length > 0) {
+                let tongQuan = left_menu[0];
+                let sp = left_menu[1];
+                let ncc = left_menu[2];
+                let pnk = left_menu[3];
+                let pxk = left_menu[4];
+                console.log("Tổng quan:", tongQuan);
+                console.log("Sản phẩm:", sp);
+                console.log("Nhà cung cấp:", ncc);
+                console.log("Phiếu nhập kho:", pnk);
+                console.log("Phiếu xuất kho:", pxk);
+              } else {
+                console.error("No items found in the left menu.");
+              }
+            };
+
+            let menu = document.getElementsByClassName("left-menu")[0];
+            menu.classList.add("open");
+          }
+
+          function closeLeftMenu() {
+            let menu = document.getElementsByClassName("left-menu")[0];
+            menu.classList.remove("open");
+          }
+
+          function showContentHeader() {
+            let menu = document.getElementsByClassName("content-header")[0];
+            menu.classList.add("open");
+          }
+
+          function closeContentHeader() {
+            let menu = document.getElementsByClassName("content-header")[0];
+            menu.classList.remove("open");
+          }
+
+          function showDropDownMenu(element) {
+            // element.style.display = "block";
+            // console.log(element);
+            let dd_menu = element.getElementsByClassName("drop-down-menu")[0];
+            // console.log(dd_menu);
+            dd_menu.style.display =
+              dd_menu.style.display === "block" ? "none" : "block";
+          }
+        </script>
+      </div>
+      <div class="main-content">
+        <div class="dashboard container-content">
+          <div class="sumarize">
+            <div class="sumarize-content">
+              <i class="fa-solid fa-box-open primary-text"></i>
+              <div class="information">
+                <span>Sản phẩm</span>
+                <div class="quantity">40</div>
+              </div>
+            </div>
+            <div class="sumarize-content">
+              <i class="fa-solid fa-handshake warning-text"></i>
+              <div class="information">
+                <span>Nhà cung cấp</span>
+                <div class="quantity">5</div>
+              </div>
+            </div>
+            <div class="sumarize-content">
+              <i class="fa-solid fa-file-invoice success-text"></i>
+              <div class="information">
+                <span
+                  >Phiếu nhập kho
+                  <span style="font-size: 13px; white-space: nowrap"
+                    >(Tháng này)</span
+                  ></span
+                >
+                <div class="quantity">120</div>
+              </div>
+            </div>
+            <div class="sumarize-content">
+              <i class="fa-solid fa-file-export danger-text"></i>
+              <div class="information">
+                <span
+                  >Phiếu xuất kho
+                  <span style="font-size: 13px; white-space: nowrap"
+                    >(Tháng này)</span
+                  ></span
+                >
+                <div class="quantity">50</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  let left_menu = document.querySelectorAll(".content-left-menu li");
+
+  let tongQuan = left_menu[0];
+  let sp = left_menu[1];
+  let ncc = left_menu[2];
+  let pnk = left_menu[3];
+  let pxk = left_menu[4];
+  console.log("Tổng quan:", tongQuan);
+  console.log("Sản phẩm:", sp);
+  console.log("Nhà cung cấp:", ncc);
+  console.log("Phiếu nhập kho:", pnk);
+  console.log("Phiếu xuất kho:", pxk);
+  // console.log(document.querySelectorAll(".content-left-menu li"));
+
+  tongQuan.addEventListener("click", function () {
+    tongQuan.classList.add("active");
+    sp.classList.remove("active");
+    ncc.classList.remove("active");
+    pxk.classList.remove("active");
+    pnk.classList.remove("active");
+  });
+
+  sp.addEventListener("click", function () {
+    sp.classList.add("active");
+    tongQuan.classList.remove("active");
+    ncc.classList.remove("active");
+    pxk.classList.remove("active");
+    pnk.classList.remove("active");
+  });
+
+  ncc.addEventListener("click", function () {
+    ncc.classList.add("active");
+    sp.classList.remove("active");
+    tongQuan.classList.remove("active");
+    pxk.classList.remove("active");
+    pnk.classList.remove("active");
+  });
+
+  pxk.addEventListener("click", function () {
+    pxk.classList.add("active");
+    sp.classList.remove("active");
+    ncc.classList.remove("active");
+    tongQuan.classList.remove("active");
+    pnk.classList.remove("active");
+  });
+
+  pnk.addEventListener("click", function () {
+    pnk.classList.add("active");
+    sp.classList.remove("active");
+    ncc.classList.remove("active");
+    pxk.classList.remove("active");
+    tongQuan.classList.remove("active");
+  });
+</script>

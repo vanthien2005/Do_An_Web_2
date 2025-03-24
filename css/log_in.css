@@ -1,0 +1,92 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0; /* Xóa margin để làm đẹp */
+  font-family: Arial, sans-serif; /* Đặt font chữ */
+  box-sizing: border-box;
+}
+
+.img-homepage {
+  position: relative;
+  width: 100%;
+  height: 100vh; /* Chiều cao chiếm 100% chiều cao viewport */
+  background-image: url("/img/shoes_collection.png");
+  background-size: cover; /* Để ảnh bao đầy phần tử */
+  background-position: center; /* Căn giữa ảnh */
+}
+
+.heading {
+  position: absolute;
+  top: 40px;
+  left: 40px; /* Căn giữa theo chiều ngang */
+  /* transform: translateX(-50%); Căn giữa theo chiều dọc */
+  color: #fff; /* Màu chữ trắng để nổi bật trên nền tối */
+  font-size: 50px;
+  text-transform: uppercase;
+  text-align: center; /* Căn giữa chữ */
+  /* Có thể thêm một chút đổ bóng để nổi bật hơn */
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.img-homepage::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Màu đen với độ trong suốt */
+}
+
+.login-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Căn giữa form */
+  background: white; /* Nền trắng */
+  padding: 20px;
+  border-radius: 8px; /* Bo góc */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Đổ bóng */
+  width: 300px; /* Chiều rộng của form */
+}
+
+h2 {
+  text-align: center; /* Căn giữa tiêu đề */
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px; /* Khoảng cách giữa các trường */
+}
+
+label {
+  display: block; /* Để label trên cùng trường nhập */
+  margin-bottom: 5px; /* Khoảng cách dưới label */
+}
+
+input[type="text"],
+input[type="password"] {
+  width: calc(100% - 20px); /* Chiều rộng 100% */
+  padding: 10px; /* Đệm cho trường nhập */
+  border: 1px solid #ccc; /* Đường viền */
+  border-radius: 4px; /* Bo góc */
+}
+
+button {
+  width: 100%; /* Chiều rộng 100% */
+  padding: 10px; /* Đệm cho nút */
+  background-color: #28a745; /* Màu nền nút */
+  color: white; /* Màu chữ trắng */
+  border: none; /* Không có viền */
+  border-radius: 4px; /* Bo góc */
+  cursor: pointer; /* Biểu thị con trỏ chuột */
+}
+
+button:hover {
+  background-color: #218838; /* Màu nền khi hover */
+}
