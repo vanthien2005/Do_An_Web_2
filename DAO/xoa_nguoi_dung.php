@@ -13,7 +13,7 @@ if (isset($_POST['id'])) {
     
     $id = intval($_POST['id']); // Đảm bảo ID là số nguyên để tránh SQL Injection
     
-    $sql = "DELETE FROM account WHERE id = ?";
+    $sql = "DELETE FROM accounts WHERE id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
 

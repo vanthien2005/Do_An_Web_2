@@ -38,9 +38,10 @@
         // Kết nối cơ sở dữ liệu
         // Xác định số lượng người dùng trên mỗi trang
         $soLuongMoiTrang = 6;
-
         // Xác định trang hiện tại (nếu không có, mặc định là trang 1)
-        $trangHienTai = isset($_GET['page']) ? (int)$_GET['current'] : 1;
+       
+        $trangHienTai = isset($_GET['current']) ? (int)$_GET['current'] : 1;
+        
         if ($trangHienTai < 1) $trangHienTai = 1;
 
         // Tính OFFSET (bắt đầu từ đâu)
@@ -51,7 +52,7 @@
         $server = 'localhost';
         $user = 'root';
         $password = '';
-        $nameDataBase = 'web2';
+        $nameDataBase = 'project_web2';
         $conn = new mysqli($server, $user, $password, $nameDataBase);
         
         if ($conn->connect_error) {
@@ -65,7 +66,7 @@
             $search = trim($_GET['tim_kiem']);
         }
 
-            $sql = "SELECT * FROM account";
+            $sql = "SELECT * FROM accounts";
         if ($search !== "") {
             $sql .= " WHERE name LIKE ?";
         }
@@ -86,6 +87,8 @@
 
         if ($result->num_rows > 0) {
             while ($num = $result->fetch_assoc()) {
+                $statusIcon = ($num['status'] == 1) ? 'fa-unlock' : 'fa-lock';
+            $statusColor = ($num['status'] == 1) ? 'green' : 'gray';
                 echo '<tr>';
                 echo '<td>' . htmlspecialchars($num['id']) . '</td>';
                 echo '<td>' . htmlspecialchars($num['userName']) . '</td>';
@@ -101,17 +104,22 @@
                     data-phone="' . htmlspecialchars($num['numberPhone']) . '" 
                     data-name="' . htmlspecialchars($num['name']) . '" 
                     data-level="' . htmlspecialchars($num['level']) . '" 
-                    style="color: orange; padding: 10px; font-size: 20px; cursor: pointer;">
+                    style="color: orange; padding: 10px; font-size: 20px; cursor: pointer; z-index:100px">
                     </i> 
                   </div>'
                  .'<div class="icon">
                  <i class="fa fa-trash btn-xoa" data-id="' . htmlspecialchars($num['id']) . '" 
-                 style="color: red; font-size: 20px; margin-top:10px; cursor: pointer;"></i>
-               </div>';
+                 style="color: red; font-size: 20px; margin-top:10px; cursor: pointer; z-index: 100px"></i>
+               </div>' .
+               '<div class="icon">
+    <i class="fa '.$statusIcon .' btn-khoa" data-id="' . htmlspecialchars($num['id']) .'" 
+    data-status="'. htmlspecialchars($num['status']) . '"
+     style="color:'.$statusColor .'; margin-top: 10px; cursor: pointer; z-index:100px"></i>
+    </div>';
             echo '</tr>';
         } 
     }else {
-            echo '<tr><td colspan="4">Không tìm thấy dữ liệu</td></tr>';
+            echo '<tr><td colspan="7">Không tìm thấy dữ liệu</td></tr>';
         }
         
         ?>
@@ -119,9 +127,19 @@
 
     <?php
 // Tính tổng số người dùng
-$result_total = $conn->query("SELECT COUNT(*) AS total FROM account");
+if ($search !== "") {
+    $stmt_total = $conn->prepare("SELECT COUNT(*) AS total FROM accounts WHERE name LIKE ?");
+    $search_param = "%$search%";
+    $stmt_total->bind_param("s", $search_param);
+} else {
+    $stmt_total = $conn->prepare("SELECT COUNT(*) AS total FROM accounts");
+}
+
+$stmt_total->execute();
+$result_total = $stmt_total->get_result();
 $row_total = $result_total->fetch_assoc();
 $tongSoNguoiDung = $row_total['total'];
+$stmt_total->close();
 
 // Tính tổng số trang
 $tongSoTrang = ceil($tongSoNguoiDung / $soLuongMoiTrang);
@@ -131,7 +149,7 @@ $searchQuery = isset($_GET['tim_kiem']) ? '&tim_kiem=' . urlencode($_GET['tim_ki
 
 echo '<div style="text-align: center; margin-top: 20px;">';
 for ($i = 1; $i <= $tongSoTrang; $i++) {
-    $activeClass = ($i == $trangHienTai) ? 'active' : '';
+    // $activeClass = ($i == $trangHienTai) ? 'active' : '';
     echo '<a href="index.php?page=KhachHang&current=' . $i . '" 
           style="margin: 5px; padding: 8px 12px; border: 1px solid #ccc; text-decoration: none; background: ' 
           . ($i == $trangHienTai ? 'lightblue' : '#fff') . ';">
@@ -382,6 +400,45 @@ document.addEventListener("DOMContentLoaded", function() {
         window.location.search = urlParams.toString(); // Reload trang với query mới
     });
 });
+
+/////      khóa người dùng ////
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll('.btn-khoa').forEach(icon => {
+        icon.addEventListener('click', function () {
+            let userId = this.getAttribute('data-id');
+            let iconElement = this;
+
+            fetch('/DAO/khoa_nguoi_dung.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `id=${userId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    let newStatus = data.newStatus;
+                    iconElement.setAttribute("data-status", newStatus);
+
+                    // Cập nhật icon khóa/mở khóa và màu sắc
+                    if (newStatus == 1) {
+                        iconElement.classList.remove('fa-lock');
+                        iconElement.classList.add('fa-unlock');
+                        iconElement.style.color = 'green';
+                    } else {
+                        iconElement.classList.remove('fa-unlock');
+                        iconElement.classList.add('fa-lock');
+                        iconElement.style.color = 'gray';
+                    }
+                } else {
+                    alert("Cập nhật trạng thái thất bại: " + data.message);
+                }
+            })
+            .catch(error => console.error('Lỗi:', error));
+        });
+    });
+});
+
+
 
 </script>
 </html>

@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // $hashedPassword = password_hash($passWork, PASSWORD_BCRYPT);
 
     // Chuẩn bị truy vấn SQL để tránh SQL Injection
-    $sql = "INSERT INTO account (userName, passWord, numberPhone, name, level) VALUES (?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO accounts (userName, passWord, numberPhone, name, level) VALUES (?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
     
     if ($stmt) {

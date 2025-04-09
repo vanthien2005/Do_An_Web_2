@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $level = $_POST['level'];
 
     // Cập nhật dữ liệu
-    $sql = "UPDATE account SET userName=?, passWord=?, numberPhone=?, Name=?, level=? WHERE id=?";
+    $sql = "UPDATE accounts SET userName=?, passWord=?, numberPhone=?, name=?, level=? WHERE id=?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("sssssi", $userName, $passWord, $numberPhone, $name, $level, $id);
 
