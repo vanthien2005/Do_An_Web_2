@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // echo "<script>alert(\"Welcome " . $_SESSION['username'] . "\");</script>";
         echo "<script>
         alert('Welcome " . $_SESSION['username'] . "');
-        window.location.href = '/index.php';
+        window.location.href = '../index.php';
         </script>";
         exit(); // Kết thúc script để đảm bảo không có mã nào chạy sau header  
     } else {

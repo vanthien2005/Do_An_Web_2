@@ -8,6 +8,13 @@
         case 'DonHang':
             include "layout/component/DonHang.php";
             break;
+        case 'orderDetail':
+            include "layout/component/orderDetail.php";
+            break;
+         // Sửa: Thêm case cho update_status để nhúng file update_status.php
+        case 'update_status':
+            include "DAO/update_status.php";
+            break;
         case 'KhachHang':
             include "layout/component/KhachHang.php";
             break;
