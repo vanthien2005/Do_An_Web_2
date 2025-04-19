@@ -1,5 +1,4 @@
 <?php
-// LocDonHang.php
 
 // Hàm xây dựng câu lệnh WHERE dựa trên các tham số lọc
 function buildFilterQuery($city, $district, $specificAddress, $startDate, $endDate, $status)
@@ -22,7 +21,6 @@ function buildFilterQuery($city, $district, $specificAddress, $startDate, $endDa
     }
 
     // Lọc theo khoảng thời gian
-    // Lọc khoảng thời gian
     if (!empty($startDate) && !empty($endDate)) {
         $conditions[] = "o.creDate BETWEEN '" . addslashes($startDate) . "' AND '" . addslashes($endDate) . "'";
     } elseif (!empty($startDate)) {
@@ -32,7 +30,7 @@ function buildFilterQuery($city, $district, $specificAddress, $startDate, $endDa
     }
 
     // Lọc theo trạng thái
-    if (!empty($status)) {
+    if ($status !== '') {
         $conditions[] = "o.status = '" . addslashes($status) . "'";
     }
 
@@ -97,19 +95,23 @@ function countFilteredOrders($conn, $city = "", $district = "", $specificAddress
     return 0;
 }
 
-
 // Hàm hiển thị bảng đơn hàng
 function displayOrdersTable($orders)
 {
     if (empty($orders)) {
         echo "<tr><td colspan='6'>Không có đơn hàng nào phù hợp.</td></tr>";
     } else {
+        // Thêm ánh xạ trạng thái để hiển thị tên trạng thái bằng tiếng Việt
+        $statusMap = [
+            2 => 'Đã đặt',
+            3 => 'Đang giao',
+            4 => 'Thành công'
+        ];
         foreach ($orders as $order) {
             echo "<tr>";
+            // Sửa cách chuyển hướng đến orderDetail.php, thay form bằng link trực tiếp
             echo "<td>";
-            echo "<form method='POST' action='orderDetail.php'>";
-            echo "<input type='hidden' name='order_id' value='" . $order['order_id'] . "'>";
-            echo "<button type='submit' style='background-color:rgb(131, 246, 8)!important;
+            echo "<a href='index.php?page=orderDetail&order_id=" . $order['order_id'] . "' style='background-color:rgb(131, 246, 8)!important;
             border: 1px solid #ddd;
             padding: 8px 12px;
             font-size: 14px;
@@ -117,14 +119,14 @@ function displayOrdersTable($orders)
             text-decoration: none;
             cursor: pointer;
             border-radius: 4px;
-            transition: background-color 0.3s, color 0.3s;'>" . $order['order_id'] . "</button>";
-            echo "</form>";
+            transition: background-color 0.3s, color 0.3s;'>" . $order['order_id'] . "</a>";
             echo "</td>";
             echo "<td>" . htmlspecialchars($order['customer_name']) . "</td>";
             echo "<td>" . htmlspecialchars($order['address']) . "</td>";
             echo "<td>" . $order['purchase_date'] . "</td>";
             echo "<td>" . number_format($order['total'], 0, ',', '.') . "đ</td>";
-            echo "<td>" . htmlspecialchars($order['status']) . "</td>";
+            // Hiển thị trạng thái bằng tên tiếng Việt
+            echo "<td>" . htmlspecialchars($statusMap[$order['status']] ?? 'Không xác định') . "</td>";
             echo "</tr>";
         }
     }
