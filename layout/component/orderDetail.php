@@ -1,9 +1,6 @@
 <?php
-include("/connect.php");
-include("/DAO/order_detail_function.php");
 include("./connect.php");
 include("./DAO/order_detail_function.php");
-
 
 $orderId = isset($_GET['order_id']) ? (int)$_GET['order_id'] : 0;
 if ($orderId == 0) {
@@ -18,18 +15,11 @@ if (!$order) {
 $orderedInfo = getOrderedInfo($orderId, $conn);
 $fullAddress = getFullAddress($order['address_id'], $conn);
 $orderItems = getOrderItems($orderId, $conn);
-
 ?>
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/style_OrderDetail.css">
-    <title>Chi tiết đơn hàng <?php echo $orderId; ?></title>
-</head>
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
+
     .containerr {
         margin: 0;
         padding: 0;
