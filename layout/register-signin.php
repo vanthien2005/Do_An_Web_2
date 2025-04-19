@@ -13,7 +13,7 @@
         <div class="img-homepage"></div>
         <h1 class="heading">Quản Lí Bán Hàng</h1>
         <div class="login-container">
-            <form class="login-form" action="/process/login.php" method="POST">
+            <form class="login-form" action="../process/login.php" method="POST">
                 <h2>Đăng Nhập</h2>
                 <div class="form-group">
                     <label for="username">Tên Đăng Nhập</label>
