@@ -12,7 +12,7 @@ $status = isset($_GET['status']) ? htmlspecialchars($_GET['status']) : '';
 $current_page = isset($_GET['current']) ? (int)$_GET['current'] : 1;
 
 // Phân trang
-$limit = 1;
+$limit = 5;
 $offset = ($current_page - 1) * $limit;
 
 // Lấy danh sách đơn hàng đã lọc
@@ -103,28 +103,29 @@ $baseQuery = http_build_query([
         font-size: 20px;
     }
 
-    .product {
-        font-size: 16px;
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-        border-radius: 4px;
-    }
 
-    .product td {
-        padding: 10px;
-        border-radius: 4px;
-    }
 
     .state {
         font-weight: bold;
     }
 
-    .product a {
-        color: blue;
-        text-decoration: underline;
+    .order-row {
+        font-size: 20px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+        border-bottom: 1px solid #ccc;
+        transition: background-color 0.3s, box-shadow 0.3s;
+        cursor: pointer;
     }
 
-    .product a:hover {
-        color: red;
+    .order-row:hover {
+        background-color: #f5f5f5;
+        box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.3);
+        transform: scale(1.02);
+    }
+
+    .order-row:hover td {
+        color: #007bff;
     }
 
     .pagination {
@@ -163,95 +164,137 @@ $baseQuery = http_build_query([
         font-size: 14px;
         color: #666;
     }
+
+    @media (max-width: 768px) {
+        .filter {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .filter>div,
+        .filter .date {
+            width: 100%;
+        }
+
+        .filter label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .filter input[type="text"],
+        .filter select,
+        .filter input[type="date"] {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 5px;
+        }
+
+        .filter .date {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .filter .date span {
+            margin-right: 0;
+            margin-top: 10px;
+        }
+
+        .show {
+            width: 100%;
+        }
+    }
 </style>
 
 <div class="container-content">
     <div class="containerr">
-    <h2>Đơn Hàng</h2>
-    <form method="GET" action="index.php" class="filter">
-        <input type="hidden" name="page" value="DonHang">
-        <div>
-            <label for="city">Thành phố</label>
-            <select id="city" name="city">
-                <option value="" <?php echo $city == '' ? 'selected' : ''; ?>>Chọn</option>
-                <?php foreach ($cities as $cityOption): ?>
-                    <option value="<?php echo htmlspecialchars($cityOption); ?>" <?php echo $city == $cityOption ? 'selected' : ''; ?>><?php echo htmlspecialchars($cityOption); ?></option>
-                <?php endforeach; ?>
-            </select>
+        <h2>Đơn Hàng</h2>
+        <form method="GET" action="index.php" class="filter">
+            <input type="hidden" name="page" value="DonHang">
+            <div>
+                <label for="city">Thành phố</label>
+                <select id="city" name="city">
+                    <option value="" <?php echo $city == '' ? 'selected' : ''; ?>>Chọn</option>
+                    <?php foreach ($cities as $cityOption): ?>
+                        <option value="<?php echo htmlspecialchars($cityOption); ?>" <?php echo $city == $cityOption ? 'selected' : ''; ?>><?php echo htmlspecialchars($cityOption); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div>
+                <label for="district">Quận/Huyện</label>
+                <select id="district" name="district">
+                    <option value="" <?php echo $district == '' ? 'selected' : ''; ?>>Chọn</option>
+                    <?php foreach ($districts as $districtOption): ?>
+                        <option value="<?php echo htmlspecialchars($districtOption); ?>" <?php echo $district == $districtOption ? 'selected' : ''; ?>><?php echo htmlspecialchars($districtOption); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div>
+                <label for="specific-address">Địa chỉ cụ thể</label>
+                <input type="text" id="specific-address" name="specific-address" value="<?php echo htmlspecialchars($specificAddress); ?>" placeholder="Nhập địa chỉ">
+            </div>
+            <div class="date">
+                <span>Từ:</span>
+                <input type="date" id="start" name="start" value="<?php echo htmlspecialchars($startDate); ?>" max="<?php echo $currentDate; ?>">
+                <span>Đến:</span>
+                <input type="date" id="end" name="end" value="<?php echo htmlspecialchars($endDate); ?>" max="<?php echo $currentDate; ?>">
+            </div>
+            <div>
+                <label for="status">Trạng thái</label>
+                <!-- Sửa: Cập nhật các trạng thái khớp với cơ sở dữ liệu -->
+                <select id="status" name="status">
+                    <option value="" <?php echo $status == '' ? 'selected' : ''; ?>>Tất cả trạng thái</option>
+                    <option value="Chưa xác nhận" <?php echo $status == 'Chưa xác nhận' ? 'selected' : ''; ?>>Chưa xác nhận</option>
+                    <option value="Đã xác nhận" <?php echo $status == 'Đã xác nhận' ? 'selected' : ''; ?>>Đã xác nhận</option>
+                    <option value="Đã giao thành công" <?php echo $status == 'Đã giao thành công' ? 'selected' : ''; ?>>Đã giao thành công</option>
+                    <option value="Đã hủy đơn" <?php echo $status == 'Đã hủy đơn' ? 'selected' : ''; ?>>Đã hủy đơn</option>
+                </select>
+            </div>
+            <button type="submit" class="show">Lọc</button>
+        </form>
+        <hr>
+        <table>
+            <tr class="title">
+                <th>Mã đơn hàng</th>
+                <th>Khách Hàng</th>
+                <th>Địa chỉ</th>
+                <th>Ngày mua</th>
+                <th>Thành tiền</th>
+                <th>Trạng thái</th>
+            </tr>
+            <?php displayOrdersTable($orders); ?>
+        </table>
+        <div class="pagination">
+            <?php if ($current_page > 1): ?>
+                <a href="index.php?<?php echo $baseQuery; ?>&current=<?php echo $current_page - 1; ?>">
+                    < </a>
+                    <?php endif; ?>
+                    <?php
+                    $range = 2;
+                    $start = max(1, $current_page - $range);
+                    $end = min($tongtrang, $current_page + $range);
+                    ?>
+                    <?php if ($start > 1): ?>
+                        <a href="index.php?<?php echo $baseQuery; ?>&current=1">1</a>
+                        <?php if ($start > 2): ?>
+                            <span>...</span>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                    <?php for ($i = $start; $i <= $end; $i++): ?>
+                        <a href="index.php?<?php echo $baseQuery; ?>&current=<?php echo $i; ?>" class="<?php echo $current_page == $i ? 'active' : ''; ?>">
+                            <?php echo $i; ?>
+                        </a>
+                    <?php endfor; ?>
+                    <?php if ($end < $tongtrang): ?>
+                        <?php if ($end < $tongtrang - 1): ?>
+                            <span>...</span>
+                        <?php endif; ?>
+                        <a href="index.php?<?php echo $baseQuery; ?>&current=<?php echo $tongtrang; ?>"><?php echo $tongtrang; ?></a>
+                    <?php endif; ?>
+                    <?php if ($current_page < $tongtrang): ?>
+                        <a href="index.php?<?php echo $baseQuery; ?>&current=<?php echo $current_page + 1; ?>"> > </a>
+                    <?php endif; ?>
         </div>
-        <div>
-            <label for="district">Quận/Huyện</label>
-            <select id="district" name="district">
-                <option value="" <?php echo $district == '' ? 'selected' : ''; ?>>Chọn</option>
-                <?php foreach ($districts as $districtOption): ?>
-                    <option value="<?php echo htmlspecialchars($districtOption); ?>" <?php echo $district == $districtOption ? 'selected' : ''; ?>><?php echo htmlspecialchars($districtOption); ?></option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-        <div>
-            <label for="specific-address">Địa chỉ cụ thể</label>
-            <input type="text" id="specific-address" name="specific-address" value="<?php echo htmlspecialchars($specificAddress); ?>" placeholder="Nhập địa chỉ">
-        </div>
-        <div class="date">
-            <span>Từ:</span>
-            <input type="date" id="start" name="start" value="<?php echo htmlspecialchars($startDate); ?>" max="<?php echo $currentDate; ?>">
-            <span>Đến:</span>
-            <input type="date" id="end" name="end" value="<?php echo htmlspecialchars($endDate); ?>" max="<?php echo $currentDate; ?>">
-        </div>
-        <div>
-            <label for="status">Trạng thái</label>
-            <!-- Sửa: Cập nhật các trạng thái khớp với cơ sở dữ liệu -->
-            <select id="status" name="status">
-                <option value="" <?php echo $status == '' ? 'selected' : ''; ?>>Tất cả trạng thái</option>
-                <option value="Chưa xác nhận" <?php echo $status == 'Chưa xác nhận' ? 'selected' : ''; ?>>Chưa xác nhận</option>
-                <option value="Đã xác nhận" <?php echo $status == 'Đã xác nhận' ? 'selected' : ''; ?>>Đã xác nhận</option>
-                <option value="Đã giao thành công" <?php echo $status == 'Đã giao thành công' ? 'selected' : ''; ?>>Đã giao thành công</option>
-                <option value="Đã hủy đơn" <?php echo $status == 'Đã hủy đơn' ? 'selected' : ''; ?>>Đã hủy đơn</option>
-            </select>
-        </div>
-        <button type="submit" class="show">Lọc</button>
-    </form>
-    <hr>
-    <table>
-        <tr class="title">
-            <th>Mã đơn hàng</th>
-            <th>Khách Hàng</th>
-            <th>Địa chỉ</th>
-            <th>Ngày mua</th>
-            <th>Thành tiền</th>
-            <th>Trạng thái</th>
-        </tr>
-        <?php displayOrdersTable($orders); ?>
-    </table>
-    <div class="pagination">
-        <?php if ($current_page > 1): ?>
-            <a href="index.php?<?php echo $baseQuery; ?>&current=<?php echo $current_page - 1; ?>"> < </a>
-        <?php endif; ?>
-        <?php
-        $range = 2;
-        $start = max(1, $current_page - $range);
-        $end = min($tongtrang, $current_page + $range);
-        ?>
-        <?php if ($start > 1): ?>
-            <a href="index.php?<?php echo $baseQuery; ?>&current=1">1</a>
-            <?php if ($start > 2): ?>
-                <span>...</span>
-            <?php endif; ?>
-        <?php endif; ?>
-        <?php for ($i = $start; $i <= $end; $i++): ?>
-            <a href="index.php?<?php echo $baseQuery; ?>&current=<?php echo $i; ?>" class="<?php echo $current_page == $i ? 'active' : ''; ?>">
-                <?php echo $i; ?>
-            </a>
-        <?php endfor; ?>
-        <?php if ($end < $tongtrang): ?>
-            <?php if ($end < $tongtrang - 1): ?>
-                <span>...</span>
-            <?php endif; ?>
-            <a href="index.php?<?php echo $baseQuery; ?>&current=<?php echo $tongtrang; ?>"><?php echo $tongtrang; ?></a>
-        <?php endif; ?>
-        <?php if ($current_page < $tongtrang): ?>
-            <a href="index.php?<?php echo $baseQuery; ?>&current=<?php echo $current_page + 1; ?>"> > </a>
-        <?php endif; ?>
-    </div>
     </div>
 </div>

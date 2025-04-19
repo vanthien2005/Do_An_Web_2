@@ -81,6 +81,17 @@ $orderItems = getOrderItems($orderId, $conn);
         padding: 10px;
     }
 
+    .product:hover td {
+        color: #007bff;
+        /* Chữ xanh dương khi hover */
+    }
+
+    .product:hover {
+        background-color: #f5f5f5;
+        box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.3);
+        transform: scale(1.02);
+    }
+
     .info label {
         display: inline-block;
         width: 150px;
@@ -166,9 +177,9 @@ $orderItems = getOrderItems($orderId, $conn);
                 <th>Đơn giá</th>
                 <th>Tổng</th>
             </tr>
-            <?php 
+            <?php
             $total = 0;
-            foreach ($orderItems as $item): 
+            foreach ($orderItems as $item):
                 $total += $item['price'] * $item['quantity'];
             ?>
                 <tr class="product">
@@ -206,13 +217,16 @@ $orderItems = getOrderItems($orderId, $conn);
             </div>
             <div class="info">
                 <label for="purchase_date">Ngày mua</label>
-                <input type="text" value="<?php echo htmlspecialchars($order['creDate']); ?>" disabled>
+                <input type="text" value="<?php
+                                            $purchaseDate = DateTime::createFromFormat('Y-m-d', $order['creDate']);
+                                            echo $purchaseDate ? $purchaseDate->format('d/m/Y') : $order['creDate'];
+                                            ?>" disabled>
             </div>
             <div class="info">
                 <label for="status">Trạng thái</label>
                 <!-- Sửa: Thay form POST bằng các liên kết để cập nhật trạng thái -->
-                <span>
-                    <?php 
+                <span style="padding-left: 20px;">
+                    <?php
                     switch ($order['status']) {
                         case 'Chưa xác nhận':
                             echo '<span style="color: #ffc107;">Chưa xác nhận</span>';
@@ -231,9 +245,9 @@ $orderItems = getOrderItems($orderId, $conn);
                 </span>
             </div>
             <div class="info">
-                <label>Cập nhật trạng thái</label>
-                <div class="status-links">
-                    <?php 
+                <label>Cập nhật thành</label>
+                <span class="status-links" style="padding-left: 15px">
+                    <?php
                     $nextStatuses = getNextValidStatuses($order['status']);
                     foreach ($nextStatuses as $status) {
                         echo "<a href='index.php?page=update_status&order=" . urlencode($status) . "&id=$orderId' class='";
@@ -251,7 +265,7 @@ $orderItems = getOrderItems($orderId, $conn);
                         echo "</a>";
                     }
                     ?>
-                </div>
+                </span>
             </div>
             <div class="buttons">
                 <a href="index.php?page=DonHang"><i class="fa-solid fa-x"></i> Đóng</a>
