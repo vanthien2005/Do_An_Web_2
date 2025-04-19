@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Danh sách người dùng</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link
+        rel="stylesheet"
+        href="./assets/icons/fontawesome-free-6.7.2/css/all.min.css" />
     <link rel="stylesheet" href="/css/KhachHang.css">
 </head>
 
@@ -37,7 +40,7 @@
         </tr>
 
         <?php
-        $soLuongMoiTrang = 6;
+        $soLuongMoiTrang = 5;
         $trangHienTai = isset($_GET['current']) ? (int)$_GET['current'] : 1;
         if ($trangHienTai < 1) $trangHienTai = 1;
         $offset = ($trangHienTai - 1) * $soLuongMoiTrang;
@@ -59,9 +62,9 @@
             $search = trim($_GET['tim_kiem']);
         }
 
-        $sql = "SELECT * FROM account";
+        $sql = "SELECT * FROM accounts WHERE status = 'active' ";
         if ($search !== "") {
-            $sql .= " WHERE name LIKE ?";
+            $sql .= " AND name LIKE ? ";
         }
 
         $sql .= " LIMIT ? OFFSET ?";
@@ -79,8 +82,8 @@
 
         if ($result->num_rows > 0) {
             while ($num = $result->fetch_assoc()) {
-                $statusIcon = ($num['status'] == 1) ? 'fa-unlock' : 'fa-lock';
-                $statusColor = ($num['status'] == 1) ? 'green' : 'gray';
+                $statusIcon = ($num['block'] == 1) ? 'fa-unlock' : 'fa-lock';
+                $statusColor = ($num['block'] == 1) ? 'green' : 'gray';
                 echo '<tr>';
                 echo '<td>' . htmlspecialchars($num['id']) . '</td>';
                 echo '<td>' . htmlspecialchars($num['userName']) . '</td>';
@@ -91,24 +94,24 @@
                 echo '<td>
                         <div class="item">
                             <div class="icon">
-                                <i class="fa fa-edit btn-sua" 
+                                <i class="fa-regular fa-pen-to-square btn-sua btn-option warning-text" 
                                     data-id="' . htmlspecialchars($num['id']) . '" 
                                     data-username="' . htmlspecialchars($num['userName']) . '" 
                                     data-password="' . htmlspecialchars($num['passWord']) . '" 
                                     data-phone="' . htmlspecialchars($num['numberPhone']) . '" 
                                     data-name="' . htmlspecialchars($num['name']) . '" 
                                     data-level="' . htmlspecialchars($num['level']) . '" 
-                                    style="color: orange; padding: 10px; font-size: 20px; cursor: pointer;">
+                                     style=background-color: #fff2cf ">
                                 </i>
                             </div>
                             <div class="icon">
-                                <i class="fa fa-trash btn-xoa" data-id="' . htmlspecialchars($num['id']) . '" 
-                                    style="color: red; font-size: 20px; margin-top:10px; cursor: pointer;">
+                                <i class="fa-regular fa-trash-can btn-xoa btn-option wrong" data-id="' . htmlspecialchars($num['id']) . '"
+                                style=" background-color: #ffebeb !important;color: #fd6d6d !important;" >
                                 </i>
                             </div>
                             <div class="icon">
                                 <i class="fa ' . $statusIcon . ' btn-khoa" data-id="' . htmlspecialchars($num['id']) . '" 
-                                    data-status="' . htmlspecialchars($num['status']) . '" 
+                                    data-status="' . htmlspecialchars($num['block']) . '" 
                                     style="color:' . $statusColor . '; margin-top: 10px; cursor: pointer;">
                                 </i>
                             </div>
@@ -125,11 +128,11 @@
     <?php
     // Tính tổng số người dùng
     if ($search !== "") {
-        $stmt_total = $conn->prepare("SELECT COUNT(*) AS total FROM account WHERE name LIKE ?");
+        $stmt_total = $conn->prepare("SELECT COUNT(*) AS total FROM accounts WHERE name LIKE ?");
         $search_param = "%$search%";
         $stmt_total->bind_param("s", $search_param);
     } else {
-        $stmt_total = $conn->prepare("SELECT COUNT(*) AS total FROM account");
+        $stmt_total = $conn->prepare("SELECT COUNT(*) AS total FROM accounts");
     }
 
     $stmt_total->execute();
@@ -179,8 +182,10 @@
 
                 <label for="level">Level:</label>
                 <select id="level" name="level">
-                    <option value="khách hàng">Khách Hàng</option>
-                    <option value="nhân viên">Nhân Viên</option>
+                    <option value="customer">Customer</option>
+                    <option value="admin">Admin</option>
+                    <option value="seller">Seller</option>
+                    <option value="inventoryStaff">inventoryStaff</option>
                 </select>
 
                 <button type="submit">Thêm</button>
@@ -219,8 +224,10 @@
 
                 <label for="editLevel">Level:</label>
                 <select id="editLevel" name="level">
-                    <option value="khách hàng">Khách Hàng</option>
-                    <option value="nhân viên">Nhân Viên</option>
+                <option value="customer">Customer</option>
+                    <option value="admin">Admin</option>
+                    <option value="seller">Seller</option>
+                    <option value="inventoryStaff">inventoryStaff</option>
                 </select>
                 <button type="submit">Cập Nhật</button>
             </form>
@@ -279,42 +286,41 @@
     document.addEventListener("DOMContentLoaded", function() {
         var formSua = document.getElementById("formSua");
         var closeBtn = formSua.querySelector(".close");
+
 /////      khóa người dùng ////
-document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll('.btn-khoa').forEach(icon => {
-        icon.addEventListener('click', function () {
-            let userId = this.getAttribute('data-id');
-            let iconElement = this;
+document.addEventListener("click", function (e) {
+    if (e.target.classList.contains("btn-khoa")) {
+        let iconElement = e.target;
+        let userId = iconElement.getAttribute("data-id");
 
-            fetch('/DAO/khoa_nguoi_dung.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `id=${userId}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    let newStatus = data.newStatus;
-                    iconElement.setAttribute("data-status", newStatus);
+        fetch("/DAO/khoa_nguoi_dung.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded"},
+            body: `id=${userId}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                let newStatus = data.newStatus;
+                iconElement.setAttribute("data-status", newStatus);
 
-                    // Cập nhật icon khóa/mở khóa và màu sắc
-                    if (newStatus == 1) {
-                        iconElement.classList.remove('fa-lock');
-                        iconElement.classList.add('fa-unlock');
-                        iconElement.style.color = 'green';
-                    } else {
-                        iconElement.classList.remove('fa-unlock');
-                        iconElement.classList.add('fa-lock');
-                        iconElement.style.color = 'gray';
-                    }
+                if (newStatus == 1) {
+                    iconElement.classList.remove('fa-lock');
+                    iconElement.classList.add('fa-unlock');
+                    iconElement.style.color = 'green';
                 } else {
-                    alert("Cập nhật trạng thái thất bại: " + data.message);
+                    iconElement.classList.remove('fa-unlock');
+                    iconElement.classList.add('fa-lock');
+                    iconElement.style.color = 'gray';
                 }
-            })
-            .catch(error => console.error('Lỗi:', error));
-        });
-    });
+            } else {
+                alert("Cập nhật trạng thái thất bại: " + data.message);
+            }
+        })
+        .catch(error => console.error('Lỗi:', error));
+    }
 });
+
 
         // Ẩn form mặc định
         formSua.style.display = "none";
@@ -389,7 +395,7 @@ document.addEventListener("DOMContentLoaded", function () {
     ////////////////    xóa người dùng
 
     document.addEventListener("DOMContentLoaded", function() {
-        document.querySelectorAll(".fa-trash").forEach(function(btn) {
+        document.querySelectorAll(".fa-trash-can").forEach(function(btn) {
             btn.addEventListener("click", function() {
                 if (confirm("Bạn có chắc chắn muốn xóa người dùng này?")) {
                     let userId = this.closest("tr").querySelector("td").textContent;

@@ -1,10 +1,12 @@
 <?php
 // DonHang.php
-include("../../connect.php");
-include("../../DAO/LocDonHang.php");
+include("./connect.php");
+include("./DAO/LocDonHang.php");
 
 // Bắt đầu session để lưu trữ tham số lọc
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Kiểm tra xem có phải refresh thủ công không
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' && !isset($_SESSION['post_redirect'])) {
@@ -73,7 +75,7 @@ $currentDate = date('Y-m-d');
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://kit.fontawesome.com/1acf2d22a5.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="../../css/style_OrderAdmin.css">
+    <link rel="stylesheet" href="/css/style_OrderAdmin.css">
     <style>
         /* CSS nhúng trực tiếp cho phân trang */
         .pagination {

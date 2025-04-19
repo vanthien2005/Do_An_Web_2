@@ -15,7 +15,7 @@ if (isset($_POST['id'])) {
     $id = $_POST['id'];
 
     // Lấy trạng thái hiện tại
-    $query = "SELECT status FROM accounts WHERE id = ?";
+    $query = "SELECT block FROM accounts WHERE id = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("i", $id);
     $stmt->execute();
@@ -28,12 +28,12 @@ if (isset($_POST['id'])) {
     }
 
     // Đảo trạng thái
-    $newStatus = ($user['status'] == 1) ? 0 : 1;
+    $newStatus = ($user['block'] == 1) ? 0 : 1;
 
     // Cập nhật trạng thái trong database
-    $updateQuery = "UPDATE accounts SET status = ? WHERE id = ?";
+    $updateQuery = "UPDATE accounts SET block = ? WHERE id = ?";
     $updateStmt = $conn->prepare($updateQuery);
-    $updateStmt->bind_param("ii", $newStatus, $id);
+    $updateStmt->bind_param("si", $newStatus, $id);
     $updateSuccess = $updateStmt->execute();
 
     // Trả về kết quả dưới dạng JSON

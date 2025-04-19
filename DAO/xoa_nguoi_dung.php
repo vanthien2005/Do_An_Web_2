@@ -3,7 +3,7 @@ if (isset($_POST['id'])) {
     $server = 'localhost';
     $user = 'root';
     $password = '';
-    $nameDataBase = 'web2';
+    $nameDataBase = 'project_web2';
     
     $conn = new mysqli($server, $user, $password, $nameDataBase);
     
@@ -13,7 +13,7 @@ if (isset($_POST['id'])) {
     
     $id = intval($_POST['id']); // Đảm bảo ID là số nguyên để tránh SQL Injection
     
-    $sql = "DELETE FROM accounts WHERE id = ?";
+    $sql = " UPDATE accounts SET status = 'off' WHERE id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
 

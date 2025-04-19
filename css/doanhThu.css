@@ -1,0 +1,84 @@
+#locTheoNgay {
+  margin-left: 500px;
+  margin-bottom: 30px;
+}
+.table {
+  width: 80%;
+  border-collapse: collapse;
+  margin-left: 240px;
+  margin-top: 10px;
+  font-size: 18px;
+  text-align: left;
+}
+.tableDetail {
+  width: 80%;
+  border-collapse: collapse;
+
+  margin: 10px;
+  font-size: 16px;
+  text-align: left;
+}
+
+.tableDetail th,
+td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+.tableDetail th:last-child,
+td:last-child {
+  width: 100px; /* Điều chỉnh kích thước phù hợp */
+  text-align: center;
+  white-space: nowrap; /* Không cho xuống dòng */
+}
+
+.table th,
+td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+.table th:last-child,
+td:last-child {
+  width: 100px; /* Điều chỉnh kích thước phù hợp */
+  text-align: center;
+  white-space: nowrap; /* Không cho xuống dòng */
+}
+
+th {
+  background-color: #4caf50;
+  color: white;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+tr:hover {
+  background-color: #ddd;
+  justify-content: center;
+}
+#chiTietMuaHang {
+  display: none;
+  position: fixed; /* fixed để luôn ở giữa màn hình */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 2px solid #ccc;
+  padding: 20px;
+  z-index: 1001; /* Lớn hơn overlay */
+  width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  border-radius: 10px;
+}
+
+#overlayChiTiet {
+  display: none;
+  position: fixed; /* fixed để phủ toàn màn hình */
+  top: 0;
+  left: 0;
+  width: 100%; /* Bị comment mất ở code cũ */
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Làm mờ nền */
+  z-index: 1000; /* Dưới chi tiết */
+}

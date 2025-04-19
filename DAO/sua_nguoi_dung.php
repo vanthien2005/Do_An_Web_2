@@ -2,7 +2,7 @@
 $server = 'localhost';
 $user = 'root';
 $password = '';
-$nameDataBase = 'web2';
+$nameDataBase = 'project_web2';
 $conn = new mysqli($server, $user, $password, $nameDataBase);
 
 if ($conn->connect_error) {
