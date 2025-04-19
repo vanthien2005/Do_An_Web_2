@@ -1,51 +1,4 @@
 <?php
-// DonHang.php
-include("./connect.php");
-include("./DAO/LocDonHang.php");
-
-// Bắt đầu session để lưu trữ tham số lọc
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Kiểm tra xem có phải refresh thủ công không
-if ($_SERVER['REQUEST_METHOD'] !== 'POST' && !isset($_SESSION['post_redirect'])) {
-    // Xóa session filter khi refresh thủ công (F5)
-    unset($_SESSION['filter']);
-}
-
-// Xử lý dữ liệu từ form lọc hoặc phân trang (chỉ khi có POST)
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Lưu tham số lọc vào session
-    $_SESSION['filter'] = [
-        'city' => isset($_POST['city']) ? $_POST['city'] : '',
-        'district' => isset($_POST['district']) ? $_POST['district'] : '',
-        'specific-address' => isset($_POST['specific-address']) ? $_POST['specific-address'] : '',
-        'start' => isset($_POST['start']) ? $_POST['start'] : '',
-        'end' => isset($_POST['end']) ? $_POST['end'] : '',
-        'status' => isset($_POST['status']) ? $_POST['status'] : '',
-        'page' => isset($_POST['page']) ? (int)$_POST['page'] : 1
-    ];
-    // Đánh dấu đây là chuyển hướng sau POST
-    $_SESSION['post_redirect'] = true;
-    // Chuyển hướng để tránh resubmit
-    header("Location: DonHang.php");
-    exit();
-}
-
-// Xóa cờ post_redirect sau khi xử lý xong yêu cầu GET từ chuyển hướng
-if (isset($_SESSION['post_redirect'])) {
-    unset($_SESSION['post_redirect']);
-}
-
-// Lấy tham số lọc từ session (nếu không có thì mặc định rỗng)
-$filter = isset($_SESSION['filter']) ? $_SESSION['filter'] : [];
-$city = $filter['city'] ?? '';
-$district = $filter['district'] ?? '';
-$specificAddress = $filter['specific-address'] ?? '';
-$startDate = $filter['start'] ?? '';
-$endDate = $filter['end'] ?? '';
-$status = $filter['status'] ?? '';
 include("./connect.php");
 include("./DAO/LocDonHang.php");
 
@@ -88,29 +41,15 @@ $baseQuery = http_build_query([
 ]);
 ?>
 
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://kit.fontawesome.com/1acf2d22a5.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="/css/style_OrderAdmin.css">
-    <style>
-        /* CSS nhúng trực tiếp cho phân trang */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 20px;
-            gap: 5px;
-        }
     .containerr {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
         font-family: 'Roboto', sans-serif;
     }
-
 
     .filter {
         margin: 10px 0;
